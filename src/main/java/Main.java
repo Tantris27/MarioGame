@@ -1,4 +1,3 @@
-import java.awt.*;
 import jade.Window;
 
 public class Main {

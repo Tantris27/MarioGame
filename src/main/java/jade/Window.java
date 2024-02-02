@@ -4,6 +4,7 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -33,6 +34,15 @@ public class Window {
         System.out.println("Hello LWJGL" + Version.getVersion() + "!");
         init();
         loop();
+
+        //Free the Memory
+        glfwFreeCallbacks(glfwWindow);
+        glfwDestroyWindow(glfwWindow);
+
+        //Terminate GLFW and free the Error Callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+
     }
 
     public void init() {
@@ -52,6 +62,10 @@ public class Window {
         if (glfwWindow == NULL) {
             throw new IllegalStateException("Failed to create the GLFW Window.");
         }
+
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePositionCallback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow,MouseListener::mouseScrollCallback);
         //Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
         // Enable V-sync
@@ -68,11 +82,11 @@ public class Window {
     }
 
     public void loop() {
-        while(!glfwWindowShouldClose(glfwWindow)){
+        while (!glfwWindowShouldClose(glfwWindow)) {
             //Poll Events
             glfwPollEvents();
 
-            glClearColor(1.0f,0.0f,0.0f,1.0f);
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             glfwSwapBuffers(glfwWindow);
