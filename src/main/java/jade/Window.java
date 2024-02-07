@@ -17,18 +17,36 @@ public class Window {
 
     private static Window window = null;
 
+    // private static int currentSceneIndex=-1;
+    private static Scene currentScene;
+
     private Window() {
         this.width = 1920;
         this.height = 1080;
         this.title = "Mario";
     }
-
+    public float r=1.0f,g=1.0f,b=1.0f,a=1.0f;
     public static Window get() {
         if (Window.window == null) {
             Window.window = new Window();
 
         }
         return Window.window;
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                //currentScene.init();
+                break;
+            case 1:
+                currentScene= new LevelScene();
+                break;
+            default:
+                assert false: "Unknown Scene '"+ newScene +"'";
+                break;
+        }
     }
 
     public void run() {
@@ -81,25 +99,29 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        Window.changeScene(0);
     }
 
     public void loop() {
         float beginTime = Time.getTime();
-        float endTime = Time.getTime();
+        float endTime ;
+        float dt = -1.0f;
         while (!glfwWindowShouldClose(glfwWindow)) {
             //Poll Events
             glfwPollEvents();
 
-            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
-
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
-                System.out.println("Space");
+            if(dt>=0.0f){
+                currentScene.update(dt);
             }
+          /*  if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
+                System.out.println("Space");
+            }*/
             glfwSwapBuffers(glfwWindow);
 
             endTime = Time.getTime();
-            float dt = endTime - beginTime;
+            dt = endTime - beginTime;
             beginTime = endTime;
         }
     }
