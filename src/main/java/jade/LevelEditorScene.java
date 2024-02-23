@@ -1,30 +1,45 @@
 package jade;
 
-import java.awt.event.KeyEvent;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glCreateShader;
 
 public class LevelEditorScene extends Scene {
 
-    private boolean changingScene = false;
-    private float timeToBlack= 2.0f;
+    private String vertexShaderSource = "#version 330 core\n" +
+            "layout (location=0) in vec3 aPos;\n" +
+            "layout (location=1) in vec4 aColor;\n" +
+            "\n" +
+            "out vec4 fColor;\n" +
+            "\n" +
+            "void main(){\n" +
+            "    fColor = aColor;\n" +
+            "    gl_Position = vec4(aPos, 1.0);\n" +
+            "}";
+    private String fragmentShaderSource = "#version 330 core\n" +
+            "in vec4 fColor;\n" +
+            "\n" +
+            "out vec4 color;\n" +
+            "void main(){\n" +
+            "    color=fColor;\n" +
+            "}";
+
+    private int vertexId, fragmentId, shaderProgram;
 
     public LevelEditorScene() {
-        System.out.println("Inside Level Editor Scene");
+
     }
 
+    @Override
+    public void init() {
+        //Compile and Link Shaders
+        // First load and compile vertex shader
+        vertexId = glCreateShader(GL_VERTEX_SHADER);
+        //pass shader sourcecode to the gpu
+    }
+
+    @Override
     public void update(float dt) {
 
-        System.out.println(""+ (1.0f/dt)+"FPS");
-        if (!changingScene && KeyListener.isKeyPressed(KeyEvent.VK_SPACE)) {
-            changingScene = true;
-        }
-        if(changingScene&&timeToBlack>0){
-            timeToBlack-=dt;
-            Window.get().r-=dt*5.0f;
-            Window.get().g-=dt*5.0f;
-            Window.get().b-=dt*5.0f;
-        }else if(changingScene){
-            Window.changeScene(1);
-        }
     }
 
 }
